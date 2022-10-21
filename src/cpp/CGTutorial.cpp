@@ -98,6 +98,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             angleY -= 0.1f;
             break;
 
+        case GLFW_KEY_0:
+            angleX = 0.0f;
+            angleY = 0.0f;
+            angleZ = 0.0f;
+            break;
+
 	default:
 		break;
 	}
