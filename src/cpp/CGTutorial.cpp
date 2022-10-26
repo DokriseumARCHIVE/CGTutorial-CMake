@@ -22,6 +22,10 @@
 // anderen Kontext verwenden.
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+// Ab Uebung5 werden objloader.hpp und cpp benoetigt
+#include "objloader.hpp"
+
 using namespace glm;
 
 // In C- und C++-Programmen ist die Reihenfolge der include-Direktiven wichtig.
@@ -146,6 +150,11 @@ void sendMVP()
 // Einstiegspunkt f�r C- und C++-Programme (Funktion), Konsolenprogramme k�nnte hier auch Parameter erwarten
 int main(void)
 {
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> normals;
+    bool res = loadOBJ("../src/resources/teapot.obj", vertices, uvs, normals);
+
 	// Initialisierung der GLFW-Bibliothek
 	if (!glfwInit())
 	{
@@ -242,7 +251,8 @@ int main(void)
 		// des Weltkoordinatensystems befinden.
 		Model = glm::mat4(1.0f);
         Model = glm::rotate(Model, 0.0f, vec3(0, 1, 0));
-
+        Model = glm::scale(Model, glm::vec3(1.0 / 500.0, 1.0 / 500.0, 1.0 / 500.0));
+        //Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
 
         Model = glm::rotate(Model, angleX, vec3(1, 0, 0));
         Model = glm::rotate(Model, angleY, vec3(0, 1, 0));
@@ -258,7 +268,40 @@ int main(void)
 		// Das werden wir uns sp�ter noch genauer anschauen. (Schauen Sie sich die schwarzen Linien genau an,
 		// und �berlegen Sie sich, dass das wirklich ein W�rfel ist, der perspektivisch verzerrt ist.)
 		// Die Darstellung nennt man �brigens "im Drahtmodell".
-		drawCube();
+		//drawCube();
+
+        // A5.3
+        // Jedes Objekt eigenem VAO zuordnen, damit mehrere Objekte moeglich sind
+        // VAOs sind Container fuer mehrere Buffer, die zusammen gesetzt werden sollen.
+        GLuint VertexArrayIDTeapot;
+        glGenVertexArrays(1, &VertexArrayIDTeapot);
+        glBindVertexArray(VertexArrayIDTeapot);
+
+        // A5.3
+        // Ein ArrayBuffer speichert Daten zu Eckpunkten (hier xyz bzw. Position)
+        GLuint vertexbuffer;
+        glGenBuffers(1, &vertexbuffer); // Kennung erhalten
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer); // Daten zur Kennung definieren
+        // Buffer zugreifbar f�r die Shader machen
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+        // A5.3
+        // Erst nach glEnableVertexAttribArray kann DrawArrays auf die Daten zugreifen...
+        glEnableVertexAttribArray(0); // siehe layout im vertex shader: location = 0
+        glVertexAttribPointer(0,  // location = 0
+                              3,  // Datenformat vec3: 3 floats fuer xyz
+                              GL_FLOAT,
+                              GL_FALSE, // Fixedpoint data normalisieren ?
+                              0, // Eckpunkte direkt hintereinander gespeichert
+                              (void*) 0); // abweichender Datenanfang ?
+
+
+        // A5.4
+        glBindVertexArray(VertexArrayIDTeapot);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        // A5.5
+        // Cleanup VBO and shader
+        glDeleteBuffers(1, &vertexbuffer);
 
 		// Bildende. 
 		// Bilder werden in den Bildspeicher gezeichnet (so schnell wie es geht.). 
