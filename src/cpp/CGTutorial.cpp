@@ -210,11 +210,12 @@ int main(void)
 	// Der Wertebereich in OpenGL geht nicht von 0 bis 255, sondern von 0 bis 1, hier sind Werte
 	// fuer R, G und B angegeben, der vierte Wert alpha bzw. Transparenz ist beliebig, da wir keine
 	// Transparenz verwenden. Zu den Farben sei auf die entsprechende Vorlesung verwiesen !
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
 
 	// Kreieren von Shadern aus den angegebenen Dateien, kompilieren und linken und in
 	// die Grafikkarte �bertragen.  
-	programID = LoadShaders(SHADER_DIR "/TransformVertexShader.vertexshader", SHADER_DIR "/ColorFragmentShader.fragmentshader");
+	//programID = LoadShaders(SHADER_DIR "/TransformVertexShader.vertexshader", SHADER_DIR "/ColorFragmentShader.fragmentshader");
+    programID = LoadShaders(SHADER_DIR "/StandardShading.vertexshader", SHADER_DIR "/StandardShading.fragmentshader");
 
 	// Diesen Shader aktivieren ! (Man kann zwischen Shadern wechseln.) 
 	glUseProgram(programID);
@@ -250,15 +251,23 @@ int main(void)
 		// Modelmatrix : Hier auf Einheitsmatrix gesetzt, was bedeutet, dass die Objekte sich im Ursprung
 		// des Weltkoordinatensystems befinden.
 		Model = glm::mat4(1.0f);
-        Model = glm::rotate(Model, 0.0f, vec3(0, 1, 0));
-        Model = glm::scale(Model, glm::vec3(1.0 / 500.0, 1.0 / 500.0, 1.0 / 500.0));
-        //Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
+        //Model = glm::rotate(Model, 0.0f, vec3(0, 1, 0));
+        //Model = glm::scale(Model, glm::vec3(1.0 / 500.0, 1.0 / 500.0, 1.0 / 500.0));
+        Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
 
         Model = glm::rotate(Model, angleX, vec3(1, 0, 0));
         Model = glm::rotate(Model, angleY, vec3(0, 1, 0));
         Model = glm::rotate(Model, angleZ, vec3(0, 0, 1));
 
-		// Diese Informationen (Projection, View, Model) m�ssen geeignet der Grafikkarte �bermittelt werden,
+        glm::vec3 lightPos = glm::vec3(4,4,-4);
+        glUniform3f(glGetUniformLocation(programID, "LightPosition_worldspace"), lightPos.x, lightPos.y, lightPos.z);
+
+
+        glUniformMatrix4fv(glGetUniformLocation(programID, "M"), 1, GL_FALSE, &Model[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(programID, "V"), 1, GL_FALSE, &View[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(programID, "P"), 1, GL_FALSE, &Projection[0][0]);
+
+        // Diese Informationen (Projection, View, Model) m�ssen geeignet der Grafikkarte �bermittelt werden,
 		// damit sie beim Zeichnen von Objekten ber�cksichtigt werden k�nnen.
 		sendMVP();
 
@@ -295,13 +304,21 @@ int main(void)
                               0, // Eckpunkte direkt hintereinander gespeichert
                               (void*) 0); // abweichender Datenanfang ?
 
+        GLuint normalbuffer; // Hier alles analog f�r Normalen in location == 2
+        glGenBuffers(1, &normalbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+        glEnableVertexAttribArray(2); // siehe layout im vertex shader
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
 
         // A5.4
         glBindVertexArray(VertexArrayIDTeapot);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         // A5.5
         // Cleanup VBO and shader
-        glDeleteBuffers(1, &vertexbuffer);
+        //glDeleteBuffers(1, &vertexbuffer);
+        glDeleteBuffers(1, &normalbuffer);
 
 		// Bildende. 
 		// Bilder werden in den Bildspeicher gezeichnet (so schnell wie es geht.). 
