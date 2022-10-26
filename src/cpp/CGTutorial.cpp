@@ -255,11 +255,18 @@ int main(void)
 		Model = glm::mat4(1.0f);
         //Model = glm::rotate(Model, 0.0f, vec3(0, 1, 0));
         //Model = glm::scale(Model, glm::vec3(1.0 / 500.0, 1.0 / 500.0, 1.0 / 500.0));
-        Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
+
 
         Model = glm::rotate(Model, angleX, vec3(1, 0, 0));
         Model = glm::rotate(Model, angleY, vec3(0, 1, 0));
         Model = glm::rotate(Model, angleZ, vec3(0, 0, 1));
+
+
+        glm::mat4 Save = Model;
+        Model = glm::translate(Model, glm::vec3(1.5, 0.0, 0.0));
+
+
+        Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
 
         glm::vec3 lightPos = glm::vec3(4,4,-4);
         glUniform3f(glGetUniformLocation(programID, "LightPosition_worldspace"), lightPos.x, lightPos.y, lightPos.z);
@@ -340,6 +347,12 @@ int main(void)
         glDeleteBuffers(1, &uvbuffer);
         glDeleteTextures(1, &Texture);
 
+        // -----------
+        Model = Save;
+        Model = glm::scale(Model, glm::vec3(0.5, 0.5, 0.5));
+        sendMVP();
+        drawSphere(10, 10);
+        // -----------
 
 		// Bildende. 
 		// Bilder werden in den Bildspeicher gezeichnet (so schnell wie es geht.). 
