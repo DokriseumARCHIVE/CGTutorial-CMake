@@ -25,6 +25,8 @@
 
 // Ab Uebung5 werden objloader.hpp und cpp benötigt
 #include "objloader.hpp"
+// Ab Uebung7 werden texture.hpp und cpp benötigt
+#include "texture.hpp"
 
 using namespace glm;
 
@@ -312,6 +314,22 @@ int main(void)
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 
+        GLuint uvbuffer; // Hier alles analog für Texturkoordinaten in location == 1 (2 floats u und v!)
+        glGenBuffers(1, &uvbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+        glEnableVertexAttribArray(1); // siehe layout im vertex shader
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        // Load the texture
+        GLuint Texture = loadBMP_custom("../src/resources/mandrill.bmp");
+
+        // Bind our texture in Texture Unit 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Texture);
+
+        // Set our "myTextureSampler" sampler to user Texture Unit 0
+        glUniform1i(glGetUniformLocation(programID, "myTextureSampler"), 0);
+
         // A5.4
         glBindVertexArray(VertexArrayIDTeapot);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
@@ -319,6 +337,9 @@ int main(void)
         // Cleanup VBO and shader
         //glDeleteBuffers(1, &vertexbuffer);
         glDeleteBuffers(1, &normalbuffer);
+        glDeleteBuffers(1, &uvbuffer);
+        glDeleteTextures(1, &Texture);
+
 
 		// Bildende. 
 		// Bilder werden in den Bildspeicher gezeichnet (so schnell wie es geht.). 
