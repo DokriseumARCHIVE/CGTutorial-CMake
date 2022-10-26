@@ -3,27 +3,27 @@
 #include <stdlib.h>
 #include <vector>
 
-// Include GLEW, GLEW ist ein notwendiges übel. Der Hintergrund ist, dass OpenGL von Microsoft
-// zwar unterstätzt wird, aber nur in einer Uralt-Version. Deshalb beinhaltet die Header-Datei,
-// die vom Betriebssystem zur Verfägung gestellt wird, nur Deklarationen zu den uralten Funktionen,
+// Include GLEW, GLEW ist ein notwendiges Übel. Der Hintergrund ist, dass OpenGL von Microsoft
+// zwar unterstützt wird, aber nur in einer Uralt-Version. Deshalb beinhaltet die Header-Datei,
+// die vom Betriebssystem zur Verfügung gestellt wird, nur Deklarationen zu den uralten Funktionen,
 // obwohl der OpenGL-Treiber, und damit die OpenGL-dll die neuesten Funktionen implementiert.
-// Die neueren Funktionen werden deshalb äber diese Header-Datei separat zur Verfägung gestellt.
+// Die neueren Funktionen werden deshalb über diese Header-Datei separat zur Verfügung gestellt.
 #include <GL/glew.h>
 
-// Include GLFW, OpenGL definiert betriebssystemunabhängig die graphische Ausgabe. Interaktive 
-// Programme beätigen aber natärlich auch Funktionen für die Eingabe (z. B. Tastatureingaben)
+// Include GLFW, OpenGL definiert betriebssystemunabhängig die grafische Ausgabe. Interaktive
+// Programme betätigen aber natürlich auch Funktionen für die Eingabe (z. B. Tastatureingaben).
 // Dies geht bei jedem OS (z. B. Windows vs. MacOS/Unix) etwas anders. Um nun generell plattformunabhängig
 // zu sein, verwenden wir GLFW, was die gleichen Eingabe-Funktionen auf die Implementierung unterschiedlicher
 // OS abbildet. (Dazu gibt es Alternativen, glut wird z. B. auch häufig verwendet.)
 #include <GLFW/glfw3.h>
 
 // Include GLM, GLM definiert für OpenGL-Anwendungen Funktionen der linearen Algebra wie
-// Transformationsmatrizen. Mann könnte GLM auch durch etaws anderes ersetzen oder aber in einem
+// Transformationsmatrizen. Mann könnte GLM auch durch etwas anderes ersetzen oder aber in einem
 // anderen Kontext verwenden.
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-// Ab Uebung5 werden objloader.hpp und cpp benoetigt
+// Ab Uebung5 werden objloader.hpp und cpp benötigt
 #include "objloader.hpp"
 
 using namespace glm;
