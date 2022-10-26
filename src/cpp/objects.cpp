@@ -10,7 +10,7 @@
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    DrahtWuerfel-Objekt
+////    Drahtwürfel-Objekt
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 GLuint VertexArrayIDWireCube = 0;
@@ -45,7 +45,7 @@ static void createWireCube()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 	// Erklären wie die Vertex-Daten zu benutzen sind
-	glEnableVertexAttribArray(0); // Kein Disable ausführen !
+	glEnableVertexAttribArray(0); // Kein Disable ausführen!
 	glVertexAttribPointer(
 			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size
@@ -70,7 +70,7 @@ void drawWireCube()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    Wuerfel-Objekt Bunt
+////    Würfel-Objekt Bunt
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 GLuint VertexArrayIDSolidCube = 0;
@@ -124,7 +124,7 @@ static void createCube()
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0); // Kein Disable ausführen !
+	glEnableVertexAttribArray(0); // Kein Disable ausführen!
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glVertexAttribPointer(
 			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
@@ -137,7 +137,7 @@ static void createCube()
 
 	// 2nd attribute buffer : colors
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-	glEnableVertexAttribArray(1); // Kein Disable ausführen !
+	glEnableVertexAttribArray(1); // Kein Disable ausführen!
 	glVertexAttribPointer(
 			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
 			3,                                // size
@@ -172,7 +172,7 @@ GLuint lats;
 GLuint longs;
 
 
-// Dieser Code  basiert auf http://ozark.hendrix.edu/~burch/cs/490/sched/feb8/
+// Dieser Code basiert auf http://ozark.hendrix.edu/~burch/cs/490/sched/feb8/
 static void createSphere()
 {
 	glGenVertexArrays(1, &VertexArrayIDSphere);
@@ -228,7 +228,7 @@ static void createSphere()
 	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * (lats + 1) * (longs + 1), sphereNormalBufferData, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0); // Kein Disable ausführen !
+	glEnableVertexAttribArray(0); // Kein Disable ausführen!
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glVertexAttribPointer(
 			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
@@ -241,7 +241,7 @@ static void createSphere()
 
 	// 2nd attribute buffer : normals
 	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glEnableVertexAttribArray(2); // Kein Disable ausführen !
+	glEnableVertexAttribArray(2); // Kein Disable ausführen!
 	glVertexAttribPointer(
 			2,                                // attribute. No particular reason for 2, but must match the layout in the shader.
 			3,                                // size
