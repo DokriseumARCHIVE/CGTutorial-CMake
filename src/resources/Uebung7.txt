@@ -1,4 +1,4 @@
-// Ab Uebung7 werden texture.hpp und cpp benoetigt
+// Ab Uebung7 werden texture.hpp und cpp benötigt
 #include "texture.hpp"
 
 -----------------------------------------------------------------------------

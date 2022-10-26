@@ -343,7 +343,7 @@ int main(void)
 	// Grafikkarte löschen. (Das macht zur not das OS aber auch automatisch.)
 	glDeleteProgram(programID);
 
-	// Schieäen des OpenGL-Fensters und beenden von GLFW.
+	// Schießen des OpenGL-Fensters und beenden von GLFW.
 	glfwTerminate();
 
 	return 0; // Integer zurückgeben, weil main so definiert ist
