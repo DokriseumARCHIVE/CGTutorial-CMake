@@ -155,6 +155,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 glm::mat4 Projection;
 glm::mat4 View;
 glm::mat4 Model;
+glm::mat4 Save;
 GLuint programID; // OpenGL unterstützt unterschiedliche Shaderprogramme, zwischen denen man
                   // wechseln kann. Unser Programm wird mit der unsigned-integer-Variable programID
                   // referenziert.
@@ -180,10 +181,14 @@ void sendMVP()
 	// in den Adressraum der GPUs. Beim ersten Parameter 
 	// muss eine Referenz auf eine Variable im Adressraum der GPU angegeben werden.
 	glUniformMatrix4fv(glGetUniformLocation(programID, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+    // Aufgabe 6
+    glUniformMatrix4fv(glGetUniformLocation(programID, "M"), 1, GL_FALSE, &Model[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(programID, "V"), 1, GL_FALSE, &View[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(programID, "P"), 1, GL_FALSE, &Projection[0][0]);
 }
 
 void zeichneKS(){
-    glm::mat4 Save = Model;
+    Save = Model;
     Model = glm::scale(Model, glm::vec3(2,0.01,0.01));
     sendMVP();
     drawWireCube();
@@ -199,7 +204,7 @@ void zeichneKS(){
 }
 void zeichneSegment(float h)
 {
-    glm::mat4 Save = Model;
+    Save = Model;
     //Model = glm::translate(Model, glm::vec3(0, 1 * h, 0));
     //Model = glm::scale(Model, glm::vec3(h / 2.5, h / 1, h / 2.5));
     Model = glm::translate(Model, glm::vec3(0, h / 2, 0));
@@ -211,11 +216,6 @@ void zeichneSegment(float h)
 // Einstiegspunkt für C- und C++-Programme (Funktion), Konsolenprogramme könnte hier auch Parameter erwarten
 int main(void)
 {
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec2> uvs;
-    std::vector<glm::vec3> normals;
-    bool res = loadOBJ("../src/resources/teapot.obj", vertices, uvs, normals);
-
 	// Initialisierung der GLFW-Bibliothek
 	if (!glfwInit())
 	{
@@ -272,6 +272,8 @@ int main(void)
 	// für R, G und B angegeben, der vierte Wert alpha bzw. Transparenz ist beliebig, da wir keine
 	// Transparenz verwenden. Zu den Farben sei auf die entsprechende Vorlesung verwiesen!
 	glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
 	// Kreieren von Shadern aus den angegebenen Dateien, kompilieren und linken und in
 	// die Grafikkarte übertragen.
@@ -281,6 +283,54 @@ int main(void)
 	// Diesen Shader aktivieren! (Man kann zwischen Shadern wechseln.)
 	glUseProgram(programID);
 
+
+
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> normals;
+    bool res = loadOBJ("../src/resources/teapot.obj", vertices, uvs, normals);
+    // A5.3
+    // Jedes Objekt eigenem VAO zuordnen, damit mehrere Objekte möglich sind
+    // VAOs sind Container für mehrere Buffer, die zusammen gesetzt werden sollen.
+    GLuint VertexArrayIDTeapot;
+    glGenVertexArrays(1, &VertexArrayIDTeapot);
+    glBindVertexArray(VertexArrayIDTeapot);
+    // A5.3
+    // Ein ArrayBuffer speichert Daten zu Eckpunkten (hier xyz bzw. Position)
+    GLuint vertexbuffer;
+    glGenBuffers(1, &vertexbuffer); // Kennung erhalten
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer); // Daten zur Kennung definieren
+    // Buffer zugreifbar für die Shader machen
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+    // A5.3
+    // Erst nach glEnableVertexAttribArray kann DrawArrays auf die Daten zugreifen...
+    glEnableVertexAttribArray(0); // siehe layout im vertex shader: location = 0
+    glVertexAttribPointer(0,  // location = 0
+                          3,  // Datenformat vec3: 3 floats für xyz
+                          GL_FLOAT,
+                          GL_FALSE, // Fixedpoint data normalisieren?
+                          0, // Eckpunkte direkt hintereinander gespeichert
+                          (void*) 0); // abweichender Datenanfang?
+
+    GLuint normalbuffer; // Hier alles analog für Normalen in location == 2
+    glGenBuffers(1, &normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2); // siehe layout im vertex shader
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+
+    GLuint uvbuffer; // Hier alles analog für Texturkoordinaten in location == 1 (2 floats u und v!)
+    glGenBuffers(1, &uvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1); // siehe layout im vertex shader
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    // Load the texture
+    GLuint Texture = loadBMP_custom("../src/resources/mandrill.bmp");
+
+
 	// Alles ist vorbereitet, jetzt kann die Eventloop laufen...
 	while (!glfwWindowShouldClose(window))
 	{
@@ -289,8 +339,6 @@ int main(void)
 		// Per Konvention sollte man jedes Bild mit dem Löschen des Bildschirms beginnen, muss man aber nicht...
         //glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
 
 		// Einstellen der Geometrischen Transformationen:
 		// Wir verwenden dazu die Funktionen aus glm.h
@@ -321,24 +369,25 @@ int main(void)
         Model = glm::rotate(Model, angleZ, vec3(0, 0, 1));
 
 
-        glm::mat4 Save = Model;
+        Save = Model;
         Model = glm::translate(Model, glm::vec3(1.5, 0.0, 0.0));
-
-
-        //Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
         Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
 
-        glm::vec3 lightPos = glm::vec3(4,4,-4);
-        glUniform3f(glGetUniformLocation(programID, "LightPosition_worldspace"), lightPos.x, lightPos.y, lightPos.z);
+        // Bind our texture in Texture Unit 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Texture);
 
-
-        glUniformMatrix4fv(glGetUniformLocation(programID, "M"), 1, GL_FALSE, &Model[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(programID, "V"), 1, GL_FALSE, &View[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(programID, "P"), 1, GL_FALSE, &Projection[0][0]);
+        // Set our "myTextureSampler" sampler to user Texture Unit 0
+        glUniform1i(glGetUniformLocation(programID, "myTextureSampler"), 0);
 
         // Diese Informationen (Projection, View, Model) müssen geeignet der Grafikkarte übermittelt werden,
 		// damit sie beim Zeichnen von Objekten berücksichtigt werden können.
 		sendMVP();
+
+
+        // A5.4
+        glBindVertexArray(VertexArrayIDTeapot);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
 		// Nachdem der GC in der Grafikkarte aktuell ist, also z. B. auch ein sendMVP ausgeführt wurde,
 		// zeichen wir hier nun einen Würfel. Dazu werden in "drawWireCube" die Eckpunkte zur Grafikkarte
@@ -348,64 +397,9 @@ int main(void)
 		// Die Darstellung nennt man übrigens "im Drahtmodell".
 		//drawCube();
 
-        // A5.3
-        // Jedes Objekt eigenem VAO zuordnen, damit mehrere Objekte möglich sind
-        // VAOs sind Container für mehrere Buffer, die zusammen gesetzt werden sollen.
-        GLuint VertexArrayIDTeapot;
-        glGenVertexArrays(1, &VertexArrayIDTeapot);
-        glBindVertexArray(VertexArrayIDTeapot);
-
-        // A5.3
-        // Ein ArrayBuffer speichert Daten zu Eckpunkten (hier xyz bzw. Position)
-        GLuint vertexbuffer;
-        glGenBuffers(1, &vertexbuffer); // Kennung erhalten
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer); // Daten zur Kennung definieren
-        // Buffer zugreifbar für die Shader machen
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
-
-        // A5.3
-        // Erst nach glEnableVertexAttribArray kann DrawArrays auf die Daten zugreifen...
-        glEnableVertexAttribArray(0); // siehe layout im vertex shader: location = 0
-        glVertexAttribPointer(0,  // location = 0
-                              3,  // Datenformat vec3: 3 floats für xyz
-                              GL_FLOAT,
-                              GL_FALSE, // Fixedpoint data normalisieren?
-                              0, // Eckpunkte direkt hintereinander gespeichert
-                              (void*) 0); // abweichender Datenanfang?
-
-        GLuint normalbuffer; // Hier alles analog für Normalen in location == 2
-        glGenBuffers(1, &normalbuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
-        glEnableVertexAttribArray(2); // siehe layout im vertex shader
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 
-        GLuint uvbuffer; // Hier alles analog für Texturkoordinaten in location == 1 (2 floats u und v!)
-        glGenBuffers(1, &uvbuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
-        glEnableVertexAttribArray(1); // siehe layout im vertex shader
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        // Load the texture
-        GLuint Texture = loadBMP_custom("../src/resources/mandrill.bmp");
 
-        // Bind our texture in Texture Unit 0
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, Texture);
-
-        // Set our "myTextureSampler" sampler to user Texture Unit 0
-        glUniform1i(glGetUniformLocation(programID, "myTextureSampler"), 0);
-
-        // A5.4
-        glBindVertexArray(VertexArrayIDTeapot);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        // A5.5
-        // Cleanup VBO and shader
-        //glDeleteBuffers(1, &vertexbuffer);
-        glDeleteBuffers(1, &normalbuffer);
-        glDeleteBuffers(1, &uvbuffer);
-        glDeleteTextures(1, &Texture);
 
         // -----------
         Model = Save;
@@ -423,9 +417,12 @@ int main(void)
         zeichneSegment(0.3f);
         zeichneKS();
 
-        Model = glm::scale(Model, glm::vec3(2, 0.01f, 0.01f));
-        Model = glm::scale(Model, glm::vec3(0.01f, 2, 0.01f));
-        Model = glm::scale(Model, glm::vec3(0.01f, 0.01f, 2));
+        glm::vec4 lightPos = Model * glm::vec4(0, 0, 0, 1);
+        glUniform3f(glGetUniformLocation(programID, "LightPosition_worldspace"), lightPos.x, lightPos.y, lightPos.z);
+
+        //Model = glm::scale(Model, glm::vec3(2, 0.01f, 0.01f));
+        //Model = glm::scale(Model, glm::vec3(0.01f, 2, 0.01f));
+        //Model = glm::scale(Model, glm::vec3(0.01f, 0.01f, 2));
         // -----------
 
 		// Bildende. 
@@ -444,7 +441,14 @@ int main(void)
 		// Da wir zurzeit nur einen "key_callback" installiert haben, wird dann nur genau diese Funktion
 		// aus "glfwPollEvents" heraus aufgerufen.
         glfwPollEvents();
-	} 
+	}
+
+    // A5.5
+    // Cleanup VBO and shader
+    glDeleteBuffers(1, &vertexbuffer);
+    glDeleteBuffers(1, &normalbuffer);
+    glDeleteBuffers(1, &uvbuffer);
+    glDeleteTextures(1, &Texture);
 
 	// Wenn der Benutzer, das Schliesskreuz oder die Escape-Taste betätigt hat, endet die Schleife und
 	// wir kommen an diese Stelle. Hier können wir aufräumen, und z. B. das Shaderprogramm in der
