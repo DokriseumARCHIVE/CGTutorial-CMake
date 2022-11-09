@@ -376,7 +376,7 @@ int main(void)
         Model = glm::scale(Model, glm::vec3(0.5, 0.5, 0.5));
         sendMVP();
         //drawSphere(64,64);
-        zeichneSegment(0.5);
+        zeichneSegment(0.5f);
         zeichneKS();
         // -----------
 
