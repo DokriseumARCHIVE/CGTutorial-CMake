@@ -164,7 +164,15 @@ void zeichneKS(){
     drawWireCube();
     Model = Save;
 }
-
+void zeichneSegment(float h)
+{
+    glm::mat4 Save = Model;
+    Model = glm::translate(Model, glm::vec3(0, 1 * h, 0));
+    Model = glm::scale(Model, glm::vec3(h / 2.5, h / 1, h / 2.5));
+    sendMVP();
+    drawSphere(128, 128);
+    Model = Save;
+}
 // Einstiegspunkt für C- und C++-Programme (Funktion), Konsolenprogramme könnte hier auch Parameter erwarten
 int main(void)
 {
@@ -367,7 +375,8 @@ int main(void)
         Model = Save;
         Model = glm::scale(Model, glm::vec3(0.5, 0.5, 0.5));
         sendMVP();
-        drawSphere(10, 10);
+        //drawSphere(64,64);
+        zeichneSegment(0.5);
         zeichneKS();
         // -----------
 
