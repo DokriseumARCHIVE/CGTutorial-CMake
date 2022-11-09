@@ -149,6 +149,22 @@ void sendMVP()
 	glUniformMatrix4fv(glGetUniformLocation(programID, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 }
 
+void zeichneKS(){
+    glm::mat4 Save = Model;
+    Model = glm::scale(Model, glm::vec3(2,0.01,0.01));
+    sendMVP();
+    drawWireCube();
+    Model = Save;
+    Model = glm::scale(Model, glm::vec3(0.01,2,0.01));
+    sendMVP();
+    drawWireCube();
+    Model = Save;
+    Model = glm::scale(Model, glm::vec3(0.01,0.01,2));
+    sendMVP();
+    drawWireCube();
+    Model = Save;
+}
+
 // Einstiegspunkt für C- und C++-Programme (Funktion), Konsolenprogramme könnte hier auch Parameter erwarten
 int main(void)
 {
@@ -352,6 +368,7 @@ int main(void)
         Model = glm::scale(Model, glm::vec3(0.5, 0.5, 0.5));
         sendMVP();
         drawSphere(10, 10);
+        zeichneKS();
         // -----------
 
 		// Bildende. 
