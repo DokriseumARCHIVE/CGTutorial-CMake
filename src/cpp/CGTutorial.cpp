@@ -48,6 +48,10 @@ using namespace glm;
 float angleX = 0.0f;
 float angleY = 0.0f;
 float angleZ = 0.0f;
+float rotate_arm_buttom = 0.0f;
+float rotate_arm_middle = 0.0f;
+float rotate_arm_top = 0.0f;
+float rotate_arm_horizon = 0.0f;
 
 // Callback-Mechanismen gibt es in unterschiedlicher Form in allen mäglichen Programmiersprachen,
 // sehr häufig in interaktiven graphischen Anwendungen. In der Programmiersprache C werden dazu 
@@ -84,30 +88,59 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		break;
 
         case GLFW_KEY_W:
-            angleX += 0.1f;
+            angleX += 0.05f;
             break;
         case GLFW_KEY_S:
-            angleX -= 0.1f;
+            angleX -= 0.05f;
             break;
 
         case GLFW_KEY_Q:
-            angleZ += 0.1f;
+            angleZ += 0.05f;
             break;
         case GLFW_KEY_E:
-            angleZ -= 0.1f;
+            angleZ -= 0.05f;
             break;
 
         case GLFW_KEY_A:
-            angleY += 0.1f;
+            angleY += 0.05f;
             break;
         case GLFW_KEY_D:
-            angleY -= 0.1f;
+            angleY -= 0.05f;
             break;
 
         case GLFW_KEY_0:
             angleX = 0.0f;
             angleY = 0.0f;
             angleZ = 0.0f;
+            rotate_arm_buttom = 0.0f;
+            rotate_arm_middle = 0.0f;
+            rotate_arm_top = 0.0f;
+            rotate_arm_horizon = 0.0f;
+            break;
+
+        case GLFW_KEY_KP_1:
+            rotate_arm_buttom -= 0.05f;
+            break;
+        case GLFW_KEY_KP_2:
+            rotate_arm_horizon += 0.05f;
+            break;
+        case GLFW_KEY_KP_3:
+            rotate_arm_buttom += 0.05f;
+            break;
+        case GLFW_KEY_KP_4:
+            rotate_arm_middle -= 0.05f;
+            break;
+        case GLFW_KEY_KP_6:
+            rotate_arm_middle += 0.05f;
+            break;
+        case GLFW_KEY_KP_7:
+            rotate_arm_top -= 0.05f;
+            break;
+        case GLFW_KEY_KP_9:
+            rotate_arm_top += 0.05f;
+            break;
+        case GLFW_KEY_KP_8:
+            rotate_arm_horizon -= 0.05f;
             break;
 
 	default:
@@ -167,8 +200,10 @@ void zeichneKS(){
 void zeichneSegment(float h)
 {
     glm::mat4 Save = Model;
-    Model = glm::translate(Model, glm::vec3(0, 1 * h, 0));
-    Model = glm::scale(Model, glm::vec3(h / 2.5, h / 1, h / 2.5));
+    //Model = glm::translate(Model, glm::vec3(0, 1 * h, 0));
+    //Model = glm::scale(Model, glm::vec3(h / 2.5, h / 1, h / 2.5));
+    Model = glm::translate(Model, glm::vec3(0, h / 2, 0));
+    Model = glm::scale(Model, glm::vec3(h / 5, h / 2, h / 5));
     sendMVP();
     drawSphere(128, 128);
     Model = Save;
@@ -290,6 +325,7 @@ int main(void)
         Model = glm::translate(Model, glm::vec3(1.5, 0.0, 0.0));
 
 
+        //Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
         Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
 
         glm::vec3 lightPos = glm::vec3(4,4,-4);
@@ -376,8 +412,20 @@ int main(void)
         Model = glm::scale(Model, glm::vec3(0.5, 0.5, 0.5));
         sendMVP();
         //drawSphere(64,64);
+        Model = glm::rotate(Model, rotate_arm_buttom, vec3(0, 0, 1));
+        Model = glm::rotate(Model, rotate_arm_horizon, vec3(1, 0, 0));
         zeichneSegment(0.5f);
+        Model = glm::translate(Model, glm::vec3(0.0f, 0.5f, 0.0f));
+        Model = glm::rotate(Model, rotate_arm_middle, vec3(0, 0, 1));
+        zeichneSegment(0.4f);
+        Model = glm::translate(Model, glm::vec3(0.0f, 0.4f, 0.0f));
+        Model = glm::rotate(Model, rotate_arm_top, vec3(0, 0, 1));
+        zeichneSegment(0.3f);
         zeichneKS();
+
+        Model = glm::scale(Model, glm::vec3(2, 0.01f, 0.01f));
+        Model = glm::scale(Model, glm::vec3(0.01f, 2, 0.01f));
+        Model = glm::scale(Model, glm::vec3(0.01f, 0.01f, 2));
         // -----------
 
 		// Bildende. 
