@@ -208,7 +208,7 @@ void zeichneSegment(float h)
     //Model = glm::translate(Model, glm::vec3(0, 1 * h, 0));
     //Model = glm::scale(Model, glm::vec3(h / 2.5, h / 1, h / 2.5));
     Model = glm::translate(Model, glm::vec3(0, h / 2, 0));
-    Model = glm::scale(Model, glm::vec3(h / 5, h / 2, h / 5));
+    Model = glm::scale(Model, glm::vec3(h / 4, h / 2, h / 4));
     sendMVP();
     drawSphere(128, 128);
     Model = Save;
@@ -372,6 +372,7 @@ int main(void)
         Save = Model;
         Model = glm::translate(Model, glm::vec3(1.5, 0.0, 0.0));
         Model = glm::scale(Model, glm::vec3(1.0 / 1000.0, 1.0 / 1000.0, 1.0 / 1000.0));
+        Model = glm::rotate(Model, -90.0f, vec3(1, 0, 0));
 
         // Bind our texture in Texture Unit 0
         glActiveTexture(GL_TEXTURE0);
@@ -408,13 +409,15 @@ int main(void)
         //drawSphere(64,64);
         Model = glm::rotate(Model, rotate_arm_buttom, vec3(0, 0, 1));
         Model = glm::rotate(Model, rotate_arm_horizon, vec3(1, 0, 0));
-        zeichneSegment(0.5f);
-        Model = glm::translate(Model, glm::vec3(0.0f, 0.5f, 0.0f));
+
+        Model = glm::scale(Model, glm::vec3(1, 1, 1));
+        zeichneSegment(1.0f);
+        Model = glm::translate(Model, glm::vec3(0.0f, 1.0f, 0.0f));
         Model = glm::rotate(Model, rotate_arm_middle, vec3(0, 0, 1));
-        zeichneSegment(0.4f);
-        Model = glm::translate(Model, glm::vec3(0.0f, 0.4f, 0.0f));
+        zeichneSegment(0.7f);
+        Model = glm::translate(Model, glm::vec3(0.0f, 0.7f, 0.0f));
         Model = glm::rotate(Model, rotate_arm_top, vec3(0, 0, 1));
-        zeichneSegment(0.3f);
+        zeichneSegment(0.5f);
         zeichneKS();
 
         glm::vec4 lightPos = Model * glm::vec4(0, 0, 0, 1);
