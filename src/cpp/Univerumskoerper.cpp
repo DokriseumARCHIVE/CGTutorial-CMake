@@ -12,18 +12,22 @@ using namespace glm;
 #include "objects.hpp"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Universumskoerper.h"
 
-class Universumskoerper {
-	GLuint VertexArrayIDSphere = 0;
-	GLuint lats;
-	GLuint longs;
+Universumskoerper::Universumskoerper(const char* path){
+    bool res = loadOBJ(path, vertices, uvs, normals);
+    gameObjectModel = glm::mat4(1.0f);
+}
+Universumskoerper::~Universumskoerper() {}
+RenderInformation Universumskoerper::getRenderInformation(){
+    RenderInformation renderInformation = RenderInformation();
+    renderInformation.renderModel = this->gameObjectModel;
+    renderInformation.renderVertices = this->vertices;
+    renderInformation.renderUvs = this->uvs;
+    renderInformation.renderNormals = this->normals;
+    renderInformation.maxDistSun = this->maxDistSun;
+    renderInformation.minDistSun = this->minDistSun;
 
-	Universumskoerper() {
-		
-	}
+    return renderInformation;
+}
 
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
-	std::vector<glm::vec3> normals;
-	bool res = loadOBJ("Kugel.obj", vertices, uvs, normals);
-};

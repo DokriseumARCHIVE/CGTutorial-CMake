@@ -15,9 +15,6 @@ using namespace glm;
 int main(void) {
 	Applikation app = Applikation(1280, 720, "Milchstrasse");
 	app.run();
-	while (true) {
-
-	}
 
 	//TODO: Objekt laden
 	//TODO: Universumskoerper (UK) in Sonnensystem initialisieren
