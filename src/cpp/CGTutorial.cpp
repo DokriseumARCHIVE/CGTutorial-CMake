@@ -214,7 +214,7 @@ void zeichneSegment(float h)
     Model = Save;
 }
 // Einstiegspunkt für C- und C++-Programme (Funktion), Konsolenprogramme könnte hier auch Parameter erwarten
-int main(void)
+int mains(void)
 {
 	// Initialisierung der GLFW-Bibliothek
 	if (!glfwInit())
