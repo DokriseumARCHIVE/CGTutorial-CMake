@@ -13,7 +13,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 	src/cpp/Univerumskoerper.cpp
 	src/cpp/RenderInformation.h
 	src/cpp/RenderInformation.cpp
-)
+		)
 set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -Wall)
 

@@ -14,11 +14,46 @@ using namespace glm;
 #include <math.h>
 #include "Universumskoerper.h"
 
-Universumskoerper::Universumskoerper(const char* path){
+Universumskoerper::Universumskoerper(const char* path, float posX, float posY, float posZ){
     bool res = loadOBJ(path, vertices, uvs, normals);
     gameObjectModel = glm::mat4(1.0f);
+    gameObjectModel = glm::translate(gameObjectModel, glm::vec3(posX, posY, posZ));
+    gameObjectModel = glm::scale(gameObjectModel, glm::vec3(1, 1, 1));
+}
+Universumskoerper::Universumskoerper(const char* path, float posX, float posY, float posZ, float scaleX, float scaleY, float scaleZ){
+    bool res = loadOBJ(path, vertices, uvs, normals);
+    gameObjectModel = glm::mat4(1.0f);
+    gameObjectModel = glm::translate(gameObjectModel, glm::vec3(posX, posY, posZ));
+    gameObjectModel = glm::scale(gameObjectModel, glm::vec3(scaleX, scaleY, scaleZ));
 }
 Universumskoerper::~Universumskoerper() {}
+
+void Universumskoerper::setPosition(float posX, float posY, float posZ) {
+    gameObjectModel = glm::translate(gameObjectModel, glm::vec3(posX, posY, posZ));
+}
+
+void Universumskoerper::setScale(float scaleX, float scaleY, float scaleZ) {
+    gameObjectModel = glm::scale(gameObjectModel, glm::vec3(scaleX, scaleY, scaleZ));
+}
+
+void Universumskoerper::setTexture(const char *path, unsigned int programmID) {
+    this->texture = loadBMP_custom(path);
+    // Bind our texture in Texture Unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, this->texture);
+    glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
+
+}
+
+void Universumskoerper::setTextures(const char *path, unsigned int programmID) {
+    this->texture = loadDDS(path);
+    // Bind our texture in Texture Unit 0
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, this->texture);
+    glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 1);
+
+}
+
 RenderInformation Universumskoerper::getRenderInformation(){
     RenderInformation renderInformation = RenderInformation();
     renderInformation.renderModel = this->gameObjectModel;

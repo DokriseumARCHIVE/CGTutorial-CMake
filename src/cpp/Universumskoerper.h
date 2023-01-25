@@ -20,15 +20,21 @@ private:
     unsigned int rotation;
     unsigned int programID;
     unsigned int textureID;
+    GLuint texture;
     glm::mat4 gameObjectModel;
     glm::vec3 minDistSun;
     glm::vec3 maxDistSun;
 
 
 public:
-    Universumskoerper(const char* path);
+    Universumskoerper(const char* path, float posX, float posY, float posZ);
+    Universumskoerper(const char* path, float posX, float posY, float posZ, float scaleX, float scaleY, float scaleZ);
     ~Universumskoerper();
     RenderInformation getRenderInformation();
+    void setPosition(float posX, float posY, float posZ);
+    void setScale(float scaleX, float scaleY, float scaleZ);
+    void setTexture(const char* path, unsigned int programmID);
+    void setTextures(const char* path, unsigned int programmID);
 
 };
 #endif

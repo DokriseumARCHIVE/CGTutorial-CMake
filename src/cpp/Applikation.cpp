@@ -14,6 +14,10 @@ using namespace glm;
 #include "Applikation.h"
 #include "Universumskoerper.h"
 #include "asset.hpp"
+#include <string>
+#include <iostream>
+#include <filesystem>
+#include <fstream>
 
 
 RenderInformation renderHelper(Universumskoerper uk);
@@ -98,31 +102,51 @@ void Applikation::run() {
 
 	glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    glClearColor(0.4f, 0.2f, 0.9f, 0.9f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.9f);
 
 	//glfwSetKeyCallback(hwnd, key_callback);
 	programmID = LoadShaders(SHADER_DIR "/StandardShading.vertexshader", SHADER_DIR "/StandardShading.fragmentshader");
 	glUseProgram(programmID);
 
     std::vector<RenderInformation> renderInformationVector;
-    Universumskoerper universumskoerper = Universumskoerper("/home/dustin/.projects/2022/CLionProjects/CGTutorial-CMake/src/resources/Kugel.obj");
-    renderInformationVector.reserve(1);
-    renderInformationVector.push_back(renderHelper(universumskoerper));
+    Universumskoerper ukSonne = Universumskoerper(RESOURCES_DIR "/sphere.obj", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+    Universumskoerper ukMerkur = Universumskoerper(RESOURCES_DIR "/sphere.obj", 1.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukVenus = Universumskoerper(RESOURCES_DIR "/sphere.obj", 2.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukErde = Universumskoerper(RESOURCES_DIR "/sphere.obj", 3.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukMars = Universumskoerper(RESOURCES_DIR "/sphere.obj", 4.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukJupiter = Universumskoerper(RESOURCES_DIR "/sphere.obj", 5.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukSaturn = Universumskoerper(RESOURCES_DIR "/sphere.obj", 6.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukUranus = Universumskoerper(RESOURCES_DIR "/sphere.obj", 7.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukNeptun = Universumskoerper(RESOURCES_DIR "/sphere.obj", 8.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukPluto = Universumskoerper(RESOURCES_DIR "/sphere.obj", 9.0f, 0.0f, 1.0f, 0.1f, 0.1f, 0.1f);
+
+    renderInformationVector.reserve(10);
+    renderInformationVector.push_back(renderHelper(ukSonne));
+    renderInformationVector.push_back(renderHelper(ukMerkur));
+    renderInformationVector.push_back(renderHelper(ukVenus));
+    renderInformationVector.push_back(renderHelper(ukErde));
+    renderInformationVector.push_back(renderHelper(ukMars));
+    renderInformationVector.push_back(renderHelper(ukJupiter));
+    renderInformationVector.push_back(renderHelper(ukSaturn));
+    renderInformationVector.push_back(renderHelper(ukUranus));
+    renderInformationVector.push_back(renderHelper(ukNeptun));
+    renderInformationVector.push_back(renderHelper(ukPluto));
     float n = 0.1f;
     float f = 100.0f;
     this->projektion = glm::perspective(45.0f, 16.0f / 9.0f, n, f);
     this->ansicht = glm::lookAt(glm::vec3(0.0, 0.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
     //----------------------------
 
     //----------------------------
+    ukSonne.setTexture(RESOURCES_DIR "/erde.bmp", programmID);
+    //ukMerkur.setTexture(RESOURCES_DIR "/mandrill.bmp", programmID);
 
     while (!glfwWindowShouldClose(hwnd)) {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        projektion = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-        ansicht = glm::lookAt(glm::vec3(0,0,-5),
-                           glm::vec3(0,0,0),
-                           glm::vec3(0,1,0));
+        //projektion = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 10.0f);
+        //ansicht = glm::lookAt(glm::vec3(0,0,-5),glm::vec3(0,0,0),glm::vec3(0,1,0));
         modell = glm::mat4(1.0f);
 
         glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
@@ -132,7 +156,7 @@ void Applikation::run() {
             glBindVertexArray(r.renderVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, r.renderVertices.size());
         }
-        glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
+        //glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
         glm::vec4 lightPos = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -10.0f)) * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
         glUniform3f(glGetUniformLocation(programmID, "LightPosition_worldspace"), lightPos.x, lightPos.y,
                     lightPos.z);
