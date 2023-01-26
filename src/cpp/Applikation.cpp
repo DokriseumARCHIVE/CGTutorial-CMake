@@ -34,6 +34,8 @@ Applikation::Applikation(unsigned int breite, unsigned int hoehe, const char* ti
 	}
 
 	this->hwnd = glfwCreateWindow(breite, hoehe, titel, NULL, NULL);
+
+    //this->pathsBMP[10]
 }
 
 Applikation::~Applikation(){
@@ -81,6 +83,15 @@ void drawVertices(Universumskoerper uk) {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,                            3,                            GL_FLOAT,                          GL_FALSE,                           0,                           (void*) 0);
 
+}
+void setTexture(glm::mat4 uk, const char *path, unsigned int programmID) {
+    GLint texture = loadBMP_custom(path);
+    glm::mat4 tmp = uk;
+    // Bind our texture in Texture Unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
+    uk = tmp;
 }
 
 void Applikation::run() {
@@ -139,8 +150,8 @@ void Applikation::run() {
     //----------------------------
 
     //----------------------------
-    ukSonne.setTexture(RESOURCES_DIR "/erde.bmp", programmID);
-    //ukMerkur.setTexture(RESOURCES_DIR "/mandrill.bmp", programmID);
+    //ukSonne.setTexture(RESOURCES_DIR "/erde.bmp", programmID);
+    //ukMerkur.setTexture(RESOURCES_DIR "/merkur.bmp", programmID);
 
     while (!glfwWindowShouldClose(hwnd)) {
         glfwPollEvents();
@@ -152,6 +163,13 @@ void Applikation::run() {
         glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
         for (int i = 0; i < renderInformationVector.size(); i++) {
             RenderInformation r = renderInformationVector[i];
+
+            GLint texture = loadBMP_custom(pathsBMP[i]);
+            // Bind our texture in Texture Unit 0
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
+            //setTexture(r.renderModel,                             pathsBMP[i],                            programmID);
             sendMVP(r.renderModel);
             glBindVertexArray(r.renderVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, r.renderVertices.size());

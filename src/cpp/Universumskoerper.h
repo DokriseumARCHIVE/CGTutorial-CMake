@@ -21,6 +21,7 @@ private:
     unsigned int programID;
     unsigned int textureID;
     GLuint texture;
+    GLuint textures[10];
     glm::mat4 gameObjectModel;
     glm::vec3 minDistSun;
     glm::vec3 maxDistSun;
@@ -34,7 +35,9 @@ public:
     void setPosition(float posX, float posY, float posZ);
     void setScale(float scaleX, float scaleY, float scaleZ);
     void setTexture(const char* path, unsigned int programmID);
-    void setTextures(const char* path, unsigned int programmID);
+    void setTexture(const char* path, unsigned int programmID, int array_index);
+    void setTextures(const char* path, unsigned int programmID, int array_index);
+    glm::mat4 getObjekt();
 
 };
 #endif

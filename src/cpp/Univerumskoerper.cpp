@@ -45,14 +45,21 @@ void Universumskoerper::setTexture(const char *path, unsigned int programmID) {
 
 }
 
-void Universumskoerper::setTextures(const char *path, unsigned int programmID) {
-    this->texture = loadDDS(path);
-    // Bind our texture in Texture Unit 0
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, this->texture);
-    glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 1);
+void Universumskoerper::setTextures(const char *path, unsigned int programmID, int array_index) {
+    /**
+    glGenTextures(10, textures);
+    glBindTexture(GL_TEXTURE_2D, textures[array_index]);
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 1024, 1024, 0, GL_RGB, GL_UNSIGNED_BYTE, path);
+    glActiveTexture(GL_TEXTURE0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+     **/
 
 }
+
+glm::mat4 Universumskoerper::getObjekt() {
+    return this->gameObjectModel;
+}
+
 
 RenderInformation Universumskoerper::getRenderInformation(){
     RenderInformation renderInformation = RenderInformation();
