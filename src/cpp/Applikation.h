@@ -26,16 +26,16 @@ private:
 	glm::mat4 projektion;
     glm::mat4 ansicht;
     glm::mat4 modell;
-    char* pathsBMP[10] = { RESOURCES_DIR "/mandrill.bmp",
+    char* pathsBMP[10] = { RESOURCES_DIR "/sonne.bmp",
     RESOURCES_DIR "/merkur.bmp",
+    RESOURCES_DIR "/venus.bmp",
     RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp",
-    RESOURCES_DIR "/erde.bmp"
+    RESOURCES_DIR "/mars.bmp",
+    RESOURCES_DIR "/jupiter.bmp",
+    RESOURCES_DIR "/saturn.bmp",
+    RESOURCES_DIR "/uranus.bmp",
+    RESOURCES_DIR "/neptun.bmp",
+    RESOURCES_DIR "/pluto.bmp"
     };
     void setTexture(glm::mat4 uk, const char *path, unsigned int programmID);
     RenderInformation renderHelper(Universumskoerper uk);

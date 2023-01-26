@@ -120,16 +120,16 @@ void Applikation::run() {
 	glUseProgram(programmID);
 
     std::vector<RenderInformation> renderInformationVector;
-    Universumskoerper ukSonne = Universumskoerper(RESOURCES_DIR "/sphere.obj", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-    Universumskoerper ukMerkur = Universumskoerper(RESOURCES_DIR "/sphere.obj", 1.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukVenus = Universumskoerper(RESOURCES_DIR "/sphere.obj", 2.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukErde = Universumskoerper(RESOURCES_DIR "/sphere.obj", 3.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukMars = Universumskoerper(RESOURCES_DIR "/sphere.obj", 4.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukJupiter = Universumskoerper(RESOURCES_DIR "/sphere.obj", 5.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukSaturn = Universumskoerper(RESOURCES_DIR "/sphere.obj", 6.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukUranus = Universumskoerper(RESOURCES_DIR "/sphere.obj", 7.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukNeptun = Universumskoerper(RESOURCES_DIR "/sphere.obj", 8.0f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f);
-    Universumskoerper ukPluto = Universumskoerper(RESOURCES_DIR "/sphere.obj", 9.0f, 0.0f, 1.0f, 0.1f, 0.1f, 0.1f);
+    Universumskoerper ukSonne = Universumskoerper(RESOURCES_DIR "/sphere.obj", -5.0f, 0.0f, 0.0f, 2.0f, 2.0f, 2.0f);
+    Universumskoerper ukMerkur = Universumskoerper(RESOURCES_DIR "/sphere.obj", 1.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.2f);
+    Universumskoerper ukVenus = Universumskoerper(RESOURCES_DIR "/sphere.obj", 2.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.3f);
+    Universumskoerper ukErde = Universumskoerper(RESOURCES_DIR "/sphere.obj", 3.0f, 0.0f, 0.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukMars = Universumskoerper(RESOURCES_DIR "/sphere.obj", 4.0f, 0.0f, 0.0f, 0.3f, 0.3f, 0.3f);
+    Universumskoerper ukJupiter = Universumskoerper(RESOURCES_DIR "/sphere.obj", 5.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
+    Universumskoerper ukSaturn = Universumskoerper(RESOURCES_DIR "/sphere.obj", 6.0f, 0.0f, 0.0f, 0.7f, 0.7f, 0.7f);
+    Universumskoerper ukUranus = Universumskoerper(RESOURCES_DIR "/sphere.obj", 7.0f, 0.0f, 0.0f, 0.45f, 0.45f, 0.45f);
+    Universumskoerper ukNeptun = Universumskoerper(RESOURCES_DIR "/sphere.obj", 8.0f, 0.0f, 0.0f, 0.45f, 0.45f, 0.45f);
+    Universumskoerper ukPluto = Universumskoerper(RESOURCES_DIR "/sphere.obj", 9.0f, 0.0f, 0.0f, 0.1f, 0.1f, 0.1f);
 
     renderInformationVector.reserve(10);
     renderInformationVector.push_back(renderHelper(ukSonne));
@@ -163,7 +163,6 @@ void Applikation::run() {
         glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
         for (int i = 0; i < renderInformationVector.size(); i++) {
             RenderInformation r = renderInformationVector[i];
-
             GLint texture = loadBMP_custom(pathsBMP[i]);
             // Bind our texture in Texture Unit 0
             glActiveTexture(GL_TEXTURE0);
@@ -201,9 +200,9 @@ RenderInformation Applikation::renderHelper(Universumskoerper uk) {
     std::vector<glm::vec2> uvs = ri.renderUvs;
     std::vector<glm::vec3> normals = ri.renderNormals;
 
-    GLuint VertexArrayIDSausage;
-    glGenVertexArrays(1, &VertexArrayIDSausage);
-    glBindVertexArray(VertexArrayIDSausage);
+    GLuint VertexArrayIDUniversumskoerper;
+    glGenVertexArrays(1, &VertexArrayIDUniversumskoerper);
+    glBindVertexArray(VertexArrayIDUniversumskoerper);
 
     // Ein ArrayBuffer speichert Daten zu Eckpunkten (hier xyz bzw. Position)
     GLuint vertexbuffer;
@@ -235,7 +234,7 @@ RenderInformation Applikation::renderHelper(Universumskoerper uk) {
     glEnableVertexAttribArray(1); // siehe layout im vertex shader
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     RenderInformation rhi = ri;
-    rhi.renderVertexArray = VertexArrayIDSausage;
+    rhi.renderVertexArray = VertexArrayIDUniversumskoerper;
     rhi.renderVertices = vertices;
     rhi.renderModel = ri.renderModel;
     return rhi;
