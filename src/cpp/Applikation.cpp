@@ -84,14 +84,43 @@ void drawVertices(Universumskoerper uk) {
     glVertexAttribPointer(0,                            3,                            GL_FLOAT,                          GL_FALSE,                           0,                           (void*) 0);
 
 }
-void setTexture(glm::mat4 uk, const char *path, unsigned int programmID) {
+
+//----------------------------//
+//         Send MVP           //
+//----------------------------//
+
+void Applikation::sendMVP(glm::mat4 gameObjectModel) {
+    glm::mat4 MVP = projektion * ansicht * gameObjectModel;
+
+    glUniformMatrix4fv(glGetUniformLocation(programmID, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(programmID, "M"), 1, GL_FALSE, &gameObjectModel[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(programmID, "V"), 1, GL_FALSE, &ansicht[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(programmID, "P"), 1, GL_FALSE, &projektion[0][0]);
+}
+
+//----------------------------//
+//        set texture         //
+//----------------------------//
+
+
+void Applikation::setTexture(glm::mat4 uk, const char *path, unsigned int programmID, RenderInformation ri) {
+    glm::mat4 tmp = uk;
+    GLint texture = loadBMP_custom(path);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
+    sendMVP(ri.renderModel);
+    glBindVertexArray(ri.renderVertexArray);
+    glDrawArrays(GL_TRIANGLES, 0, ri.renderVertices.size());
+    uk = tmp;
+    /**
     GLint texture = loadBMP_custom(path);
     glm::mat4 tmp = uk;
-    // Bind our texture in Texture Unit 0
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
     uk = tmp;
+    **/
 }
 
 void Applikation::run() {
@@ -153,22 +182,40 @@ void Applikation::run() {
     //ukSonne.setTexture(RESOURCES_DIR "/erde.bmp", programmID);
     //ukMerkur.setTexture(RESOURCES_DIR "/merkur.bmp", programmID);
 
+    //setTexture(ukSonne.getObjekt(),pathsBMP[0],programmID,renderInformationVector[0]);
+    //setTexture(ukMerkur.getObjekt(),pathsBMP[1],programmID,renderInformationVector[1]);
+    //----------------------------//
+    //            WHILE           //
+    //----------------------------//
+
     while (!glfwWindowShouldClose(hwnd)) {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //projektion = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 10.0f);
         //ansicht = glm::lookAt(glm::vec3(0,0,-5),glm::vec3(0,0,0),glm::vec3(0,1,0));
         modell = glm::mat4(1.0f);
+        setTexture(ukSonne.getObjekt(),pathsBMP[0],programmID,renderInformationVector[0]);
+        setTexture(ukMerkur.getObjekt(),pathsBMP[1],programmID,renderInformationVector[1]);
+        setTexture(ukVenus.getObjekt(),pathsBMP[2],programmID,renderInformationVector[2]);
+        setTexture(ukErde.getObjekt(),pathsBMP[3],programmID,renderInformationVector[3]);
+        setTexture(ukMars.getObjekt(),pathsBMP[4],programmID,renderInformationVector[4]);
+        setTexture(ukJupiter.getObjekt(),pathsBMP[5],programmID,renderInformationVector[5]);
+        setTexture(ukSaturn.getObjekt(),pathsBMP[6],programmID,renderInformationVector[6]);
+        setTexture(ukUranus.getObjekt(),pathsBMP[7],programmID,renderInformationVector[7]);
+        setTexture(ukNeptun.getObjekt(),pathsBMP[8],programmID,renderInformationVector[8]);
+        setTexture(ukPluto.getObjekt(),pathsBMP[9],programmID,renderInformationVector[9]);
 
         glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
         for (int i = 0; i < renderInformationVector.size(); i++) {
             RenderInformation r = renderInformationVector[i];
+
+            /**
             GLint texture = loadBMP_custom(pathsBMP[i]);
-            // Bind our texture in Texture Unit 0
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
             glUniform1i(glGetUniformLocation(programmID, "myTextureSampler"), 0);
-            //setTexture(r.renderModel,                             pathsBMP[i],                            programmID);
+            **/
+
             sendMVP(r.renderModel);
             glBindVertexArray(r.renderVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, r.renderVertices.size());
@@ -183,14 +230,9 @@ void Applikation::run() {
 
 }
 
-void Applikation::sendMVP(glm::mat4 gameObjectModel) {
-    glm::mat4 MVP = projektion * ansicht * gameObjectModel;
-
-    glUniformMatrix4fv(glGetUniformLocation(programmID, "MVP"), 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(programmID, "M"), 1, GL_FALSE, &gameObjectModel[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(programmID, "V"), 1, GL_FALSE, &ansicht[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(programmID, "P"), 1, GL_FALSE, &projektion[0][0]);
-}
+//----------------------------//
+//       render helper        //
+//----------------------------//
 
 //2
 //helper method for setting ub the vertex-, uv- and normalbuffer

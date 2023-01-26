@@ -37,10 +37,11 @@ private:
     RESOURCES_DIR "/neptun.bmp",
     RESOURCES_DIR "/pluto.bmp"
     };
+    void sendMVP(mat4 gameObjectModel);
     void setTexture(glm::mat4 uk, const char *path, unsigned int programmID);
+    void setTexture(glm::mat4 uk, const char *path, unsigned int programmID, RenderInformation ri);
     RenderInformation renderHelper(Universumskoerper uk);
 
-    void sendMVP(mat4 gameObjectModel);
 };
 
 #endif
